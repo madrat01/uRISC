@@ -1,0 +1,51 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/Users/madhavrathi/Desktop/Projects/UW/ece552/uRISC/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	/p5.9.20220306.0/
+INCLUDE_FILES	Makefile	/^INCLUDE_FILES = ${TB}\/top_tb.sv ${SRC}\/top.sv ${SRC}\/fetch\/*.sv$/;"	m
+SRC	Makefile	/^SRC = .\/src$/;"	m
+TB	Makefile	/^TB = .\/tb$/;"	m
+addr	src/fetch/fetch.sv	/^logic [15:0]    addr;$/;"	r	module:fetch
+addr	src/fetch/if_mem.sv	/^    input logic [15:0]  addr,$/;"	p	module:if_mem
+all	Makefile	/^all:$/;"	t
+clean	Makefile	/^clean:$/;"	t
+clk	src/fetch/fetch.sv	/^    input logic         clk,$/;"	p	module:fetch
+clk	src/fetch/if_mem.sv	/^    input logic         clk,$/;"	p	module:if_mem
+clk	src/top.sv	/^    input logic             clk,$/;"	p	module:top
+clk	tb/top_tb.sv	/^logic clk;$/;"	r	module:top_tb
+data_in	src/fetch/fetch.sv	/^logic           data_in;$/;"	r	module:fetch
+data_in	src/fetch/if_mem.sv	/^    input logic [15:0]  data_in,$/;"	p	module:if_mem
+data_out	src/fetch/if_mem.sv	/^    output logic [15:0] data_out,$/;"	p	module:if_mem
+enable	src/fetch/fetch.sv	/^logic           enable;$/;"	r	module:fetch
+enable	src/fetch/if_mem.sv	/^    input logic         enable,$/;"	p	module:if_mem
+err	src/fetch/fetch.sv	/^    output logic        err$/;"	p	module:fetch
+err	src/fetch/if_mem.sv	/^    output logic        err$/;"	p	module:if_mem
+err	src/top.sv	/^    output logic            err$/;"	p	module:top
+err	tb/top_tb.sv	/^logic err;$/;"	r	module:top_tb
+fetch	src/fetch/fetch.sv	/^module fetch ($/;"	m
+if_mem	src/fetch/fetch.sv	/^if_mem if_mem ($/;"	i	module:fetch
+if_mem	src/fetch/if_mem.sv	/^module if_mem ($/;"	m
+ifetch	src/top.sv	/^fetch ifetch$/;"	i	module:top
+inst_ifid	src/fetch/fetch.sv	/^    output logic [15:0] inst_ifid,$/;"	p	module:fetch
+inst_ifid	src/top.sv	/^logic [15:0]    inst_ifid;$/;"	r	module:top
+mem	src/fetch/if_mem.sv	/^logic [7:0]    mem[65536];$/;"	r	module:if_mem
+mem_write	src/fetch/if_mem.sv	/^always_ff @(posedge clk) begin : mem_write$/;"	b	module:if_mem
+pc	src/fetch/fetch.sv	/^    input logic [15:0]  pc,$/;"	p	module:fetch
+pc	src/top.sv	/^logic [15:0]    pc;$/;"	r	module:top
+rst	src/fetch/fetch.sv	/^    input logic         rst,$/;"	p	module:fetch
+rst	src/fetch/if_mem.sv	/^    input logic         rst,$/;"	p	module:if_mem
+rst	src/top.sv	/^    input logic             rst,$/;"	p	module:top
+rst	tb/top_tb.sv	/^logic rst;$/;"	r	module:top_tb
+top	src/top.sv	/^module top ($/;"	m
+top_tb	tb/top_tb.sv	/^module top_tb();$/;"	m
+uRISC	README.md	/^# uRISC$/;"	c
+uRISC	tb/top_tb.sv	/^top uRISC(.*);$/;"	i	module:top_tb
+wr	src/fetch/fetch.sv	/^logic           wr;$/;"	r	module:fetch
+wr	src/fetch/if_mem.sv	/^    input logic         wr,$/;"	p	module:if_mem
