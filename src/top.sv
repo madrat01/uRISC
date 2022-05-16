@@ -68,4 +68,19 @@ decode u_decode(
     .uop_cnt_idix_p1                (uop_cnt_idix_p1                )
 );
 
+execute u_execute(
+    .clk                            (clk                   ),
+    .rst                            (rst                   ),
+    .pc_p1                          (pc_p1                 ),
+    .rs_idix_p1                     (rs_idix_p1            ),
+    .rt_idix_p1                     (rt_idix_p1            ),
+    .rd_idix_p1                     (rd_idix_p1            ),
+    .uop_cnt_idix_p1                (uop_cnt_idix_p1       ),
+    .execute_valid_idix_p1          (execute_valid_idix_p1 ),
+    .ldst_valid_idix_p1             (ldst_valid_idix_p1    ),
+    .jmp_idix_p1                    (jmp_idix_p1           ),
+    .branch_idix_p1                 (branch_idix_p1        ),
+    .opcode_idix_p1                 (opcode_idix_p1        )
+);
+
 endmodule

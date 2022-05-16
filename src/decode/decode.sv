@@ -56,9 +56,11 @@ assign opcode_idix_p1 = inst_ifid_p1[15:11];
 // 24   -   rotate non immediate
 // 25   -   equivalence checks 
 assign uop_cnt_idix_p1[0] = ~(halt_idif_p1 | nop_idif_p1 | illegal_op_idif_p1);
-assign uop_cnt_idix_p1[17:2] =  uop_cnt_idix_p1[19] ? {8'b0, inst_ifid_p1} : 
-                                imm5_valid_idix_p1  ? {{11{inst_ifid_p1[4]}}, inst_ifid_p1[4:0]} :
-                                                      {{8{inst_ifid_p1[7]}}, inst_ifid_p1[7:0]}; 
+assign uop_cnt_idix_p1[17:2] =  (uop_cnt_idix_p1[19])                       ? {8'b0, inst_ifid_p1[7:0]}                     : 
+                                (uop_cnt_idix_p1[18] & opcode_idix_p1[1])   ? {11'b0, inst_ifid_p1[4:0]}                    :
+                                (jmp_displacement_idif_p1)                  ? {{5{inst_ifid_p1[11]}}, inst_ifid_p1[10:0]}   :
+                                (imm5_valid_idix_p1)                        ? {{11{inst_ifid_p1[4]}}, inst_ifid_p1[4:0]}    :
+                                                                              {{8{inst_ifid_p1[7]}}, inst_ifid_p1[7:0]}     ; 
 
 always_comb begin : decode_inst
 
