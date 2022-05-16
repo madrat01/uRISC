@@ -122,8 +122,8 @@ always_comb begin : decode_inst
         // Shift and load byte
         // 10010 sss iiiiiiii SLBI Rs, immediate Rs <- (Rs << 8) | I(zero ext.)
         5'b100xx :  begin 
-                        execute_valid_idix_p1 = opcode[2:0] == 2'b10;
-                        uop_cnt_idix_p1[19] = opcode[2:0] == 2'b10; 
+                        execute_valid_idix_p1 = opcode_idix_p1[2:0] == 2'b10;
+                        uop_cnt_idix_p1[19] = opcode_idix_p1[2:0] == 2'b10; 
                         ldst_valid_idmem_p1 = ~uop_cnt_idix_p1[19]; 
                         ldst_valid_idix_p1 = ~uop_cnt_idix_p1[19];
                         imm5_valid_idix_p1 = ~uop_cnt_idix_p1[19];
