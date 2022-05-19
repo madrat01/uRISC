@@ -14,6 +14,7 @@ module if_mem (
 
 logic [7:0]     mem[0:65535];
 logic           loaded;
+logic           wr_en;
 
 `ifndef SYNTH
 initial begin
@@ -29,6 +30,8 @@ assign data_out = enable & ~wr ? {mem[addr], mem[addr+1]} : 16'h0;
 // Dosen't support unaligned accesses
 assign err = enable & addr[0];
 
+assign wr_en = wr & enable;
+
 // Big-endian memory
 always_ff @(posedge clk, posedge rst) begin : mem_write
     `ifndef SYNTH
@@ -41,7 +44,7 @@ always_ff @(posedge clk, posedge rst) begin : mem_write
     end
     `endif
     // Write memory when enable and write enable set
-    if (enable & wr) begin
+    if (wr_en) begin
         mem[addr+1] <= data_in[7:0];
         mem[addr] <= data_in[15:8];
     end

@@ -7,6 +7,7 @@ module decode (
     input logic [15:0]      epc_p1,
 
     // Outputs
+    output logic [15:0]     inst_idix_p1,
     output logic [2:0]      rd_idix_p1,
     output logic [2:0]      rs_idix_p1,
     output logic [2:0]      rt_idix_p1,
@@ -27,6 +28,8 @@ module decode (
 );
 
 logic imm5_valid_idix_p1;
+
+assign inst_idix_p1 = inst_ifid_p1;
 
 // Source register
 // Rs always 10:8

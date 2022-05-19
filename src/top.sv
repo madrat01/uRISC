@@ -11,6 +11,7 @@ logic [15:0]    pc_p1;
 logic [15:0]    epc_p1;
 logic [15:0]    inst_ifid_p1;
 
+logic [15:0]    inst_idix_p1;
 logic [2:0]     rd_idix_p1;
 logic [2:0]     rs_idix_p1;
 logic [2:0]     rt_idix_p1;
@@ -51,6 +52,7 @@ decode u_decode(
     .epc_p1                         (epc_p1                         ),
 
     // Outputs
+    .inst_idix_p1                   (inst_idix_p1                   ),
     .rd_idix_p1                     (rd_idix_p1                     ),
     .rs_idix_p1                     (rs_idix_p1                     ),
     .rt_idix_p1                     (rt_idix_p1                     ),
@@ -74,6 +76,7 @@ execute u_execute(
     .clk                            (clk                   ),
     .rst                            (rst                   ),
     .pc_p1                          (pc_p1                 ),
+    .inst_idix_p1                   (inst_idix_p1          ),
     .rs_idix_p1                     (rs_idix_p1            ),
     .rt_idix_p1                     (rt_idix_p1            ),
     .rd_idix_p1                     (rd_idix_p1            ),

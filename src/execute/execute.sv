@@ -2,6 +2,7 @@ module execute (
     input logic         clk,
     input logic         rst,
     input logic [15:0]  pc_p1,
+    input logic [15:0]  inst_idix_p1,
     input logic [2:0]   rs_idix_p1,
     input logic [2:0]   rt_idix_p1,
     input logic [2:0]   rd_idix_p1,
@@ -30,6 +31,7 @@ logic           wr_success_p1;
 logic [15:0]    epc_p1;
 
 logic           alu_output_valid;
+logic [15:0]    pc_nxt_p1;
 
 // Rs, Rt and Rd registers
 assign rs_in = rs_idix_p1;
@@ -67,6 +69,7 @@ alu u_alu(
     .rst                   (rst                   ),
     .rs_p1                 (rs_p1                 ),
     .rt_p1                 (rt_p1                 ),
+    .inst_idix_p1          (inst_idix_p1          ),
     .opcode_idix_p1        (opcode_idix_p1        ),
     .uop_cnt_idix_p1       (uop_cnt_idix_p1       ),
     .execute_valid_idix_p1 (execute_valid_idix_p1 ),
@@ -78,7 +81,8 @@ alu u_alu(
 
     // Outputs
     .rd_p1                 (rd_p1                 ),
-    .alu_output_valid      (alu_output_valid      )
+    .alu_output_valid      (alu_output_valid      ),
+    .pc_nxt_p1             (pc_nxt_p1             )
 );
 
 endmodule

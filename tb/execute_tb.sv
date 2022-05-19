@@ -29,6 +29,8 @@ logic [2:0]     rs_idix_p1;
 logic [2:0]     rt_idix_p1;
 logic [2:0]     rd_idix_p1;
 
+logic [15:0]    inst_idix_p1;
+
 task automatic shifter_check (ref logic [15:0] A, ref logic [3:0] amt, ref logic [25:0] rotate, ref logic right, ref logic [15:0] result);
     logic [4:0] amt_ext;
     $display("--- Shifter Check Started --- ");
@@ -58,7 +60,7 @@ endtask
 execute u_execute (.*);
 
 initial begin
-    shifter_check(u_execute.rs_p1, u_execute.u_alu.shift_rotate_val, uop_cnt_idix_p1, rotate_shift_right_idix_p1, u_execute.u_alu.shift_rotate_result);
+    shifter_check(u_execute.rs_p1, u_execute.u_alu.shift_rotate_val, uop_cnt_idix_p1, rotate_shift_right_idix_p1, u_execute.u_alu.shift_rotate_out);
     repeat (5) @ (posedge clk);
 end
 
