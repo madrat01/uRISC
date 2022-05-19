@@ -28,6 +28,7 @@ logic [4:0]     opcode_idix_p1;
 logic           execute_valid_idix_p1;
 logic [25:0]    uop_cnt_idix_p1;
 logic [25:0]    uop_cnt_ixmem_p1;
+logic           rotate_shift_right_idix_p1;
 
 fetch u_fetch
 (
@@ -65,7 +66,8 @@ decode u_decode(
     .jmp_displacement_value_idif_p1 (jmp_displacement_value_idif_p1 ),
     .opcode_idix_p1                 (opcode_idix_p1                 ),
     .execute_valid_idix_p1          (execute_valid_idix_p1          ),
-    .uop_cnt_idix_p1                (uop_cnt_idix_p1                )
+    .uop_cnt_idix_p1                (uop_cnt_idix_p1                ),
+    .rotate_shift_right_idix_p1     (rotate_shift_right_idix_p1     )
 );
 
 execute u_execute(
@@ -80,7 +82,8 @@ execute u_execute(
     .ldst_valid_idix_p1             (ldst_valid_idix_p1    ),
     .jmp_idix_p1                    (jmp_idix_p1           ),
     .branch_idix_p1                 (branch_idix_p1        ),
-    .opcode_idix_p1                 (opcode_idix_p1        )
+    .opcode_idix_p1                 (opcode_idix_p1        ),
+    .rotate_shift_right_idix_p1     (rotate_shift_right_idix_p1)
 );
 
 endmodule

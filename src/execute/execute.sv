@@ -10,7 +10,8 @@ module execute (
     input logic         ldst_valid_idix_p1,
     input logic         jmp_idix_p1,
     input logic         branch_idix_p1,
-    input logic [4:0]   opcode_idix_p1
+    input logic [4:0]   opcode_idix_p1,
+    input logic         rotate_shift_right_idix_p1
 );
 
 logic [2:0]     rs_in;  // Source register
@@ -73,6 +74,7 @@ alu u_alu(
     .jmp_idix_p1           (jmp_idix_p1           ),
     .branch_idix_p1        (branch_idix_p1        ),
     .pc_p1                 (pc_p1                 ),
+    .rotate_shift_right_idix_p1 (rotate_shift_right_idix_p1),
 
     // Outputs
     .rd_p1                 (rd_p1                 ),

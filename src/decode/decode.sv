@@ -22,7 +22,8 @@ module decode (
     output logic [15:0]     jmp_displacement_value_idif_p1,
     output logic [4:0]      opcode_idix_p1,
     output logic            execute_valid_idix_p1,
-    output logic [25:0]     uop_cnt_idix_p1
+    output logic [25:0]     uop_cnt_idix_p1,
+    output logic            rotate_shift_right_idix_p1
 );
 
 logic imm5_valid_idix_p1;
@@ -77,6 +78,7 @@ always_comb begin : decode_inst
     rd_idix_p1 = 3'b0;
     uop_cnt_idix_p1[1] = 1'b0;
     uop_cnt_idix_p1[25:18] = 'b0;
+    rotate_shift_right_idix_p1 = 1'b0;
 
     case (opcode_idix_p1) inside
         // Halt execution
@@ -140,7 +142,8 @@ always_comb begin : decode_inst
                         execute_valid_idix_p1 = 1'b1; 
                         imm5_valid_idix_p1 = 1'b1; 
                         rd_idix_p1 = inst_ifid_p1[7:5];
-                        uop_cnt_idix_p1[20] = 1'b1; 
+                        uop_cnt_idix_p1[20] = 1'b1;
+                        rotate_shift_right_idix_p1 = opcode_idix_p1[1];
                     end
         // Load Byte immediate 
         // 11000 sss iiiiiiii LBI Rs, immediate Rs <- I(sign ext.)
@@ -169,6 +172,7 @@ always_comb begin : decode_inst
                         rd_idix_p1 = inst_ifid_p1[4:2];
                         uop_cnt_idix_p1[23] = opcode_idix_p1[0];
                         uop_cnt_idix_p1[24] = ~opcode_idix_p1[0];
+                        rotate_shift_right_idix_p1 = uop_cnt_idix_p1[24] & inst_ifid_p1[1];
                     end
         // Equalence checks
         // 11100 sss ttt ddd xx SEQ Rd, Rs, Rt if (Rs == Rt) then Rd <- 1 else Rd <- 0
