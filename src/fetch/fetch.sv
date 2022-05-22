@@ -14,7 +14,7 @@ logic           enable;
 logic [15:0]    data_in;
 logic           wr;
 
-always_ff @ (posedge clk, posedge rst) begin
+always_ff @ (posedge clk) begin
     // Start execution from 16'h0
     if (rst)
         pc_p1 <= 'b0;

@@ -35,7 +35,7 @@ assign rd_out = en ? gpr[rd_in] : 'bx;
 // ----
 // Write Register
 // ----
-always_ff @ (posedge clk, posedge rst) begin
+always_ff @ (posedge clk) begin
     // Reset all registers to 0
     if (rst) begin
         gpr[0] <= 16'b0;
@@ -59,7 +59,7 @@ end
 // ----
 // Write EPC Register
 // ----
-always_ff @ (posedge clk, posedge rst) begin
+always_ff @ (posedge clk) begin
     // Reset all registers to 0
     if (rst)
         epc <= 16'b0;

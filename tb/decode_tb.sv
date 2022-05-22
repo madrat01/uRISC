@@ -1,8 +1,8 @@
 module decode_tb(input logic clk, input logic rst);
 
-logic [15:0]     pc_p1;
-logic [15:0]     inst_ifid_p1;
-logic [15:0]     epc_p1;
+logic [15:0]    pc_p1;
+logic [15:0]    inst_ifid_p1;
+logic [15:0]    epc_p1;
 
 logic [2:0]     rd_idix_p1;
 logic [2:0]     rs_idix_p1;
