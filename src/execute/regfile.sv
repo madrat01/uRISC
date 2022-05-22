@@ -2,9 +2,10 @@ module regfile (
     // Inputs
     input logic         clk,
     input logic         rst,
-    input logic [2:0]   rs_in,  // Source register
-    input logic [2:0]   rt_in,  // 2nd source register
-    input logic [2:0]   rd_in,  // Destination register
+    input logic [2:0]   rs_in,  // Read Source register
+    input logic [2:0]   rt_in,  // Read 2nd source register
+    input logic [2:0]   rd_in,  // Read Destination register
+    input logic [2:0]   dest_in,// Write Destination register
     input logic         wr,     // Write desitination register?
     input logic         en,
     input logic [15:0]  data_in,
@@ -47,8 +48,8 @@ always_ff @ (posedge clk, posedge rst) begin
         gpr[7] <= 16'b0;
         wr_success <= 1'b0;
     // Actul write to the register
-    end else if (wr & en) begin
-        gpr[rd_in] <= data_in; 
+    end else if (wr) begin
+        gpr[dest_in] <= data_in; 
         wr_success <= 1'b1;
     // Default write success to 0
     end else

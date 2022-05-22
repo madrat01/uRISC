@@ -39,6 +39,9 @@ logic           ldst_valid_ixmem_p1;
 logic [1:0]     store_valid_ixmem_p1;
 logic [1:0]     store_valid_idix_p1;
 logic [15:0]    mem_data_in_ixmem_p1;
+logic [2:0]     dest_reg_index_memwb_p1;
+logic [15:0]    dest_reg_value_memwb_p1;
+logic           dest_reg_write_valid_memwb_p1;
 
 logic [15:0]    inst_idix_p1;
 

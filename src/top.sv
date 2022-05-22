@@ -4,7 +4,8 @@ module top (
     input logic             rst,
 
     // Outputs
-    output logic            err_p1
+    output logic            err_p1,
+    output logic            halt_idif_p1
 );
 
 // Fetch output signals
@@ -18,7 +19,6 @@ logic [2:0]     rd_idix_p1;
 logic [2:0]     rs_idix_p1;
 logic [2:0]     rt_idix_p1;
 logic           ldst_valid_idix_p1;
-logic           halt_idif_p1;
 logic           nop_idif_p1;
 logic           illegal_op_idif_p1;
 logic           return_execution_idif_p1;
@@ -114,6 +114,9 @@ execute u_execute(
     .dest_reg_idix_p1               (dest_reg_idix_p1               ),
     .reg_write_valid_idix_p1        (reg_write_valid_idix_p1        ),
     .jmp_displacement_idix_p1       (jmp_displacement_idix_p1       ),
+    .dest_reg_value_memwb_p1        (dest_reg_value_memwb_p1),
+    .dest_reg_index_memwb_p1        (dest_reg_index_memwb_p1),
+    .dest_reg_write_valid_memwb_p1  (dest_reg_write_valid_memwb_p1), 
 
     // Outputs
     .dest_reg_value_ixmem_p1        (dest_reg_value_ixmem_p1       ),            

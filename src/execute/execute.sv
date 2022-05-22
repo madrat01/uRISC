@@ -17,6 +17,9 @@ module execute (
     input logic [2:0]   dest_reg_idix_p1,
     input logic         reg_write_valid_idix_p1,
     input logic         jmp_displacement_idix_p1,
+    input logic [2:0]   dest_reg_index_memwb_p1,
+    input logic [15:0]  dest_reg_value_memwb_p1,
+    input logic         dest_reg_write_valid_memwb_p1,
 
     // Outputs
     output logic [15:0] dest_reg_value_ixmem_p1,
@@ -28,9 +31,10 @@ module execute (
     output logic [15:0] mem_data_in_ixmem_p1
 );
 
-logic [2:0]     rs_in;  // Source register
-logic [2:0]     rt_in;  // 2nd source register
-logic [2:0]     rd_in;  // Destination register
+logic [2:0]     rs_in;  // Read Source register
+logic [2:0]     rt_in;  // Read 2nd source register
+logic [2:0]     rd_in;  // Read Destination register
+logic [2:0]     dest_in;// Write Destination register
 logic           wr;     // Write desitination register?
 logic           en;
 logic [15:0]    data_in;
@@ -68,6 +72,18 @@ assign ldst_valid_ixmem_p1 = ldst_valid_idix_p1;
 assign store_valid_ixmem_p1 = store_valid_idix_p1;
 assign mem_data_in_ixmem_p1 = rd_p1;
 
+// ----------------
+// Write back state
+// ----------------
+// Index of register to write
+assign dest_in = dest_reg_index_memwb_p1;
+
+// Write enable
+assign wr = dest_reg_write_valid_memwb_p1;
+
+// Data to write
+assign data_in = dest_reg_value_memwb_p1;
+
 regfile u_regfile(
     // Inputs
     .clk                (clk        ),
@@ -75,6 +91,7 @@ regfile u_regfile(
     .rs_in              (rs_in      ),
     .rt_in              (rt_in      ),
     .rd_in              (rd_in      ),
+    .dest_in            (dest_in    ),
     .wr                 (wr         ),
     .en                 (en         ),
     .data_in            (data_in    ),
