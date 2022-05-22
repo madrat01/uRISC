@@ -12,7 +12,6 @@ module decode (
     output logic [2:0]      rs_idix_p1,
     output logic [2:0]      rt_idix_p1,
     output logic            ldst_valid_idix_p1,
-    output logic            ldst_valid_idmem_p1,
     output logic            halt_idif_p1,
     output logic            nop_idif_p1,
     output logic            illegal_op_idif_p1,
@@ -20,11 +19,15 @@ module decode (
     output logic            jmp_idix_p1,
     output logic            branch_idix_p1,
     output logic            jmp_displacement_idif_p1,
+    output logic            jmp_displacement_idix_p1,
     output logic [15:0]     jmp_displacement_value_idif_p1,
     output logic [4:0]      opcode_idix_p1,
     output logic            execute_valid_idix_p1,
     output logic [25:0]     uop_cnt_idix_p1,
-    output logic            rotate_shift_right_idix_p1
+    output logic            rotate_shift_right_idix_p1,
+    output logic [2:0]      dest_reg_idix_p1,
+    output logic            reg_write_valid_idix_p1,
+    output logic [1:0]      store_valid_idix_p1 // 0-Store, 1-Store with update
 );
 
 logic imm5_valid_idix_p1;
@@ -53,16 +56,16 @@ assign opcode_idix_p1 = inst_ifid_p1[15:11];
 // 2:17 -   16-bit sign extended or unsign extended immediate
 // 18   -   immediate execute
 // 19   -   SLBI
-// 20   -   rotate immediate
+// 20   -   rotate/shift immediate
 // 21   -   LBI
 // 22   -   BTR
 // 23   -   non immediate execute
-// 24   -   rotate non immediate
+// 24   -   rotate/shift non immediate
 // 25   -   equivalence checks 
 assign uop_cnt_idix_p1[0] = ~(halt_idif_p1 | nop_idif_p1 | illegal_op_idif_p1);
 assign uop_cnt_idix_p1[17:2] =  (uop_cnt_idix_p1[19])                       ? {8'b0, inst_ifid_p1[7:0]}                     : 
                                 (uop_cnt_idix_p1[18] & opcode_idix_p1[1])   ? {11'b0, inst_ifid_p1[4:0]}                    :
-                                (jmp_displacement_idif_p1)                  ? {{5{inst_ifid_p1[11]}}, inst_ifid_p1[10:0]}   :
+                                (jmp_displacement_idif_p1)                  ? {{5{inst_ifid_p1[10]}}, inst_ifid_p1[10:0]}   :
                                 (imm5_valid_idix_p1)                        ? {{11{inst_ifid_p1[4]}}, inst_ifid_p1[4:0]}    :
                                                                               {{8{inst_ifid_p1[7]}}, inst_ifid_p1[7:0]}     ; 
 
@@ -73,7 +76,6 @@ always_comb begin : decode_inst
     execute_valid_idix_p1 = 1'b0;
     imm5_valid_idix_p1 = 1'b0;
     ldst_valid_idix_p1 = 1'b0;
-    ldst_valid_idmem_p1 = 1'b0;
     illegal_op_idif_p1 = 1'b0;
     nop_idif_p1 = 1'b0;
     halt_idif_p1 = 1'b0;
@@ -82,6 +84,10 @@ always_comb begin : decode_inst
     uop_cnt_idix_p1[1] = 1'b0;
     uop_cnt_idix_p1[25:18] = 'b0;
     rotate_shift_right_idix_p1 = 1'b0;
+    dest_reg_idix_p1 = rd_idix_p1;
+    reg_write_valid_idix_p1 = 1'b0;
+    store_valid_idix_p1 = 2'b0;
+    jmp_idix_p1 = 1'b0;
 
     case (opcode_idix_p1) inside
         // Halt execution
@@ -100,7 +106,9 @@ always_comb begin : decode_inst
         5'b001xx :  begin 
                         jmp_displacement_idif_p1 = ~opcode_idix_p1[0]; 
                         jmp_idix_p1 = |opcode_idix_p1[1:0];
-                        uop_cnt_idix_p1[1] = opcode_idix_p1[1]; 
+                        uop_cnt_idix_p1[1] = opcode_idix_p1[1];
+                        dest_reg_idix_p1 = 3'b111; // R7 Write
+                        reg_write_valid_idix_p1 = uop_cnt_idix_p1[1]; 
                     end
         // Immediate execute
         // 01000 sss ddd iiiii ADDI Rd, Rs, immediate Rd <- Rs + I(sign ext.)
@@ -111,7 +119,8 @@ always_comb begin : decode_inst
                         execute_valid_idix_p1 = 1'b1; 
                         imm5_valid_idix_p1 = 1'b1; 
                         rd_idix_p1 = inst_ifid_p1[7:5];
-                        uop_cnt_idix_p1[18] = 1'b1; 
+                        uop_cnt_idix_p1[18] = 1'b1;
+                        reg_write_valid_idix_p1 = 1'b1; 
                     end
         // Branch instructions
         // 01100 sss iiiiiiii BEQZ Rs, immediate if (Rs == 0) then PC <- PC + 2 + I(sign ext.)
@@ -131,10 +140,13 @@ always_comb begin : decode_inst
         5'b100xx :  begin 
                         execute_valid_idix_p1 = opcode_idix_p1[2:0] == 2'b10;
                         uop_cnt_idix_p1[19] = opcode_idix_p1[2:0] == 2'b10; 
-                        ldst_valid_idmem_p1 = ~uop_cnt_idix_p1[19]; 
                         ldst_valid_idix_p1 = ~uop_cnt_idix_p1[19];
                         imm5_valid_idix_p1 = ~uop_cnt_idix_p1[19];
-                        rd_idix_p1 = inst_ifid_p1[7:5]; 
+                        rd_idix_p1 = inst_ifid_p1[7:5];
+                        store_valid_idix_p1[0] = ~|opcode_idix_p1[1:0];
+                        store_valid_idix_p1[1] = &opcode_idix_p1[1:0];
+                        dest_reg_idix_p1 = opcode_idix_p1[1:0] == 2'b01 ? rd_idix_p1 : rs_idix_p1;
+                        reg_write_valid_idix_p1 = |opcode_idix_p1[1:0];
                     end
         // Rotate execute
         // 10100 sss ddd iiiii ROLI Rd, Rs, immediate Rd <- Rs <<(rotate) I(lowest 4 bits)
@@ -147,12 +159,14 @@ always_comb begin : decode_inst
                         rd_idix_p1 = inst_ifid_p1[7:5];
                         uop_cnt_idix_p1[20] = 1'b1;
                         rotate_shift_right_idix_p1 = opcode_idix_p1[1];
+                        reg_write_valid_idix_p1 = 1'b1;
                     end
         // Load Byte immediate 
         // 11000 sss iiiiiiii LBI Rs, immediate Rs <- I(sign ext.)
         5'b11000 :  begin 
                         execute_valid_idix_p1 = 1'b1;
                         uop_cnt_idix_p1[21] = 1'b1;
+                        reg_write_valid_idix_p1 = 1'b1;
                     end
         // BTR
         // 11001 sss xxx ddd xx BTR Rd, Rs Rd[bit i] <- Rs[bit 15-i] for i=0..15
@@ -160,6 +174,7 @@ always_comb begin : decode_inst
                         execute_valid_idix_p1 = 1'b1; 
                         rd_idix_p1 = inst_ifid_p1[4:2];
                         uop_cnt_idix_p1[22] = 1'b1;
+                        reg_write_valid_idix_p1 = 1'b1;
                     end
         // Execute and rotate
         // 11011 sss ttt ddd 00 ADD Rd, Rs, Rt Rd <- Rs + Rt
@@ -176,6 +191,7 @@ always_comb begin : decode_inst
                         uop_cnt_idix_p1[23] = opcode_idix_p1[0];
                         uop_cnt_idix_p1[24] = ~opcode_idix_p1[0];
                         rotate_shift_right_idix_p1 = uop_cnt_idix_p1[24] & inst_ifid_p1[1];
+                        reg_write_valid_idix_p1 = 1'b1;
                     end
         // Equalence checks
         // 11100 sss ttt ddd xx SEQ Rd, Rs, Rt if (Rs == Rt) then Rd <- 1 else Rd <- 0
@@ -185,7 +201,8 @@ always_comb begin : decode_inst
         5'b111xx :  begin 
                         execute_valid_idix_p1 = 1'b1; 
                         rd_idix_p1 = inst_ifid_p1[4:2];
-                        uop_cnt_idix_p1[25] = 1'b1; 
+                        uop_cnt_idix_p1[25] = 1'b1;
+                        reg_write_valid_idix_p1 = 1'b1; 
                     end
         default  :  nop_idif_p1 = 1'b1;
     endcase

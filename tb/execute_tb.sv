@@ -11,16 +11,17 @@ logic [15:0]    pc;
 
 logic [15:0]    rs_p1;
 logic [15:0]    rt_p1;
-logic [15:0]    rd_p1;
+logic [15:0]    alu_output_data;
 logic           wr_success_p1;
 logic [15:0]    epc_p1;
 
-logic           alu_output_valid;
+logic           alu_write_valid;
 
 logic [25:0]    uop_cnt_idix_p1;
 logic           execute_valid_idix_p1;
 logic           ldst_valid_idix_p1;
 logic           jmp_idix_p1;
+logic           jmp_displacement_idix_p1;
 logic           branch_idix_p1;
 logic [4:0]     opcode_idix_p1;
 logic           rotate_shift_right_idix_p1;
@@ -28,6 +29,16 @@ logic [15:0]    pc_p1;
 logic [2:0]     rs_idix_p1;
 logic [2:0]     rt_idix_p1;
 logic [2:0]     rd_idix_p1;
+logic [2:0]     dest_reg_idix_p1;
+logic           reg_write_valid_idix_p1;
+logic [15:0]    dest_reg_value_ixmem_p1;
+logic [2:0]     dest_reg_index_ixmem_p1;
+logic           dest_reg_write_valid_ixmem_p1;
+logic [15:0]    mem_addr_ixmem_p1;
+logic           ldst_valid_ixmem_p1;
+logic [1:0]     store_valid_ixmem_p1;
+logic [1:0]     store_valid_idix_p1;
+logic [15:0]    mem_data_in_ixmem_p1;
 
 logic [15:0]    inst_idix_p1;
 

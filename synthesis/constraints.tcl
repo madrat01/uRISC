@@ -11,15 +11,15 @@ set_dont_touch_network [find port clk]
 
 ## Pointer to all inputs except clk
 set prim_inputs [remove_from_collection [all_inputs] [find port clk]]
-## Pointer to all inputs except clk and rst_n
-set prim_inputs_no_rst [remove_from_collection $prim_inputs [find port rst_n]]
+## Pointer to all inputs except clk and rst
+set prim_inputs_no_rst [remove_from_collection $prim_inputs [find port rst]]
 ## Set clk uncertainty (skew)
 set_clock_uncertainty 0.15 clk
 
 ## Set input delay & drive on all inputs
 set_input_delay -clock clk 0.25 [copy_collection $prim_inputs_no_rst]
-## rst_n goes to many places so don't touch
-set_dont_touch_network [find port rst_n]
+## rst goes to many places so don't touch
+set_dont_touch_network [find port rst]
 
 ## Set output delay & load on all outputs
 set_output_delay -clock clk 0.5 [all_outputs]

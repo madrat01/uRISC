@@ -14,6 +14,7 @@ module regfile (
     // Outputs
     output logic [15:0] rs_out,
     output logic [15:0] rt_out,
+    output logic [15:0] rd_out,
     output logic        wr_success,
     output logic [15:0] epc
 );
@@ -28,6 +29,7 @@ logic [15:0]    gpr[0:7];
 // ----
 assign rs_out = en ? gpr[rs_in] : 'bx;
 assign rt_out = en ? gpr[rt_in] : 'bx;
+assign rd_out = en ? gpr[rd_in] : 'bx;
 
 // ----
 // Write Register

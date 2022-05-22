@@ -1,4 +1,4 @@
-module if_mem (
+module ldst_mem (
     // Inputs
     input logic         clk,
     input logic         rst,
@@ -9,7 +9,8 @@ module if_mem (
 
     // Outputs
     output logic [15:0] data_out,
-    output logic        err
+    output logic        err,
+    output logic        wr_success
 );
 
 `ifndef SYNTH
@@ -48,12 +49,16 @@ always_ff @(posedge clk) begin
             loaded = 1;
         end
         `endif
+        wr_success <= 1'b0;
     end
     // Write memory when enable and write enable set
     else if (wr_en & ~err) begin
         mem[addr+1] <= data_in[7:0];
         mem[addr] <= data_in[15:8];
+        wr_success <= 1'b1;
     end
+    else
+        wr_success <= 1'b0;
 end
 
 endmodule
