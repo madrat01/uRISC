@@ -28,7 +28,9 @@ module execute (
     output logic [15:0] mem_addr_ixmem_p1,
     output logic        ldst_valid_ixmem_p1,
     output logic [1:0]  store_valid_ixmem_p1,
-    output logic [15:0] mem_data_in_ixmem_p1
+    output logic [15:0] mem_data_in_ixmem_p1,
+    output logic        branch_taken_ixif_p1,
+    output logic [15:0] branch_target_ixif_p1
 );
 
 logic [2:0]     rs_in;  // Read Source register
@@ -129,5 +131,8 @@ alu u_alu(
     .alu_output_data            (alu_output_data            ),
     .pc_nxt_p1                  (pc_nxt_p1                  )
 );
+
+assign branch_target_ixif_p1 = pc_nxt_p1;
+assign branch_taken_ixif_p1 = branch_idix_p1 & alu_output_data[0];
 
 endmodule

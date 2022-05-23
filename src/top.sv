@@ -44,6 +44,8 @@ logic [15:0]    mem_addr_ixmem_p1;
 logic [1:0]     store_valid_ixmem_p1;
 logic [15:0]    mem_data_in_ixmem_p1;
 logic           ldst_valid_ixmem_p1;
+logic           branch_taken_ixif_p1;
+logic [15:0]    branch_target_ixif_p1;
 
 // Mem output signals
 logic [15:0]    dest_reg_value_memwb_p1;
@@ -55,6 +57,8 @@ fetch u_fetch
     // Inputs
     .clk                        (clk),
     .rst                        (rst),
+    .branch_taken_ixif_p1       (branch_taken_ixif_p1),
+    .branch_target_ixif_p1      (branch_target_ixif_p1),
 
     // Outputs
     .pc_p1                      (pc_p1),
@@ -125,7 +129,9 @@ execute u_execute(
     .mem_addr_ixmem_p1              (mem_addr_ixmem_p1             ),
     .ldst_valid_ixmem_p1            (ldst_valid_ixmem_p1           ),
     .store_valid_ixmem_p1           (store_valid_ixmem_p1          ),
-    .mem_data_in_ixmem_p1           (mem_data_in_ixmem_p1          )
+    .mem_data_in_ixmem_p1           (mem_data_in_ixmem_p1          ),
+    .branch_taken_ixif_p1           (branch_taken_ixif_p1          ),
+    .branch_target_ixif_p1          (branch_target_ixif_p1         )
 );
 
 mem u_mem (

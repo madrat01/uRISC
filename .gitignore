@@ -3,3 +3,6 @@ transcript
 *.log
 outputs
 reports
+*.img
+*.lst
+*.trace

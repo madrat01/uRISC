@@ -22,43 +22,46 @@ module alu (
     output logic [15:0] pc_nxt_p1
 );
 
-logic [15:0]    add1, add2;
-logic [15:0]    add_out;
-logic           carry;
-logic           adder_in_use;
-logic [3:0]     shift_rotate_val;
-logic [15:0]    shift_rotate_out;
-logic [15:0]    logical_out;
-logic [15:0]    eq1, eq2;
-logic           eq_out;
-logic           pc_plus_2;
-logic           rotate;
-logic           eq_out_valid;
-logic           logical_out_valid;
-logic           add_out_valid;
-logic           shift_rotate_out_valid;
-logic           btr_out_valid;
+logic [15:0]        SExt15;
+logic [15:0]        add1, add2;
+logic [15:0]        add_out;
+logic               carry;
+logic               adder_in_use;
+logic [3:0]         shift_rotate_val;
+logic [15:0]        shift_rotate_out;
+logic [15:0]        logical_out;
+logic [15:0] eq1, eq2;
+logic               eq_out;
+logic [15:0]        pc_plus_2;
+logic               rotate;
+logic               eq_out_valid;
+logic               logical_out_valid;
+logic               add_out_valid;
+logic               shift_rotate_out_valid;
+logic               btr_out_valid;
+
+assign SExt15 = uop_cnt_idix_p1[17:2]; 
 
 // PC + 2 for Jump and Branch instructions
 assign pc_plus_2 = pc_p1 + 16'h2;
 
 // Adder input calculation
-assign add1 =   (opcode_idix_p1[1:0] & {2{uop_cnt_idix_p1[18]}}) == 2'b00 ? rs_p1                   :   // ADDI
-                (opcode_idix_p1[1:0] & {2{uop_cnt_idix_p1[18]}}) == 2'b01 ? uop_cnt_idix_p1[17:2]   :   // SUBI
+assign add1 =   (opcode_idix_p1[1:0] == 2'b00 & uop_cnt_idix_p1[18])      ? rs_p1                   :   // ADDI
+                (opcode_idix_p1[1:0] == 2'b01 & uop_cnt_idix_p1[18])      ? uop_cnt_idix_p1[17:2]   :   // SUBI
                 (branch_idix_p1 | jmp_displacement_idix_p1)               ? pc_plus_2               :   // BEQZ, BNEZ, BLTZ, BGEZ, J, JAL
                 (ldst_valid_idix_p1)                                      ? rs_p1                   :   // LD ST
-                (inst_idix_p1[1:0] & {2{uop_cnt_idix_p1[23]}}) == 2'b00   ? rs_p1                   :   // ADD
-                (inst_idix_p1[1:0] & {2{uop_cnt_idix_p1[23]}}) == 2'b01   ? rt_p1                   :   // SUB
+                (inst_idix_p1[1:0] == 2'b00 & uop_cnt_idix_p1[23])        ? rs_p1                   :   // ADD
+                (inst_idix_p1[1:0] == 2'b01 & uop_cnt_idix_p1[23])        ? rt_p1                   :   // SUB
                 (uop_cnt_idix_p1[25])                                     ? rs_p1                   :   // SCO
                 (opcode_idix_p1[0] & jmp_idix_p1)                         ? rs_p1                   :   // JR, JALR
                                                                             16'b0;                      // Default
 
-assign add2 =   (opcode_idix_p1[1:0] & {2{uop_cnt_idix_p1[18]}}) == 2'b00 ? uop_cnt_idix_p1[17:2]   :   // ADDI
-                (opcode_idix_p1[1:0] & {2{uop_cnt_idix_p1[18]}}) == 2'b01 ? ~rs_p1 + 16'b1          :   // SUBI
+assign add2 =   (opcode_idix_p1[1:0] == 2'b00 & uop_cnt_idix_p1[18])      ? uop_cnt_idix_p1[17:2]   :   // ADDI
+                (opcode_idix_p1[1:0] == 2'b01 & uop_cnt_idix_p1[18])      ? ~rs_p1 + 16'b1          :   // SUBI
                 (branch_idix_p1 | jmp_displacement_idix_p1)               ? uop_cnt_idix_p1[17:2]   :   // BEQZ, BNEZ, BLTZ, BGEZ, J, JAL
                 (ldst_valid_idix_p1)                                      ? uop_cnt_idix_p1[17:2]   :   // LD ST
-                (inst_idix_p1[1:0] & {2{uop_cnt_idix_p1[23]}}) == 2'b00   ? rt_p1                   :   // ADD
-                (inst_idix_p1[1:0] & {2{uop_cnt_idix_p1[23]}}) == 2'b01   ? ~rs_p1 + 16'b1          :   // SUB
+                (inst_idix_p1[1:0] == 2'b00 & uop_cnt_idix_p1[23])        ? rt_p1                   :   // ADD
+                (inst_idix_p1[1:0] == 2'b01 & uop_cnt_idix_p1[23])        ? ~rs_p1 + 16'b1          :   // SUB
                 (uop_cnt_idix_p1[25])                                     ? rt_p1                   :   // SCO
                 (opcode_idix_p1[0] & jmp_idix_p1)                         ? uop_cnt_idix_p1[17:2]   :   // JR, JALR
                                                                             16'b0;                      // Default
@@ -96,9 +99,9 @@ assign eq2 = rt_p1;
 assign eq_out = uop_cnt_idix_p1[25] ? (opcode_idix_p1[1:0] == 2'b00 ? eq1 == eq2 :              // SEQ
                                        opcode_idix_p1[1:0] == 2'b01 ? eq1 < eq2  :              // SLT
                                        opcode_idix_p1[1:0] == 2'b10 ? eq1 <= eq2 : carry) :     // SLE, SCO
-                branch_idix_p1      ? (opcode_idix_p1[1:0] == 2'b00 ? eq1 == 'b0 :              // BEQZ
-                                       opcode_idix_p1[1:0] == 2'b01 ? eq1 != 'b0 :              // BNEZ
-                                       opcode_idix_p1[1:0] == 2'b10 ? eq1 < 'b0  : eq1 >= 'b0) : 1'b0;  // BLTZ, BGEZ
+                branch_idix_p1      ? (opcode_idix_p1[1:0] == 2'b00 ? ~|eq1      :              // BEQZ // TODO Right?
+                                       opcode_idix_p1[1:0] == 2'b01 ? |eq1       :              // BNEZ
+                                       opcode_idix_p1[1:0] == 2'b10 ? eq1[15]    : ~eq1[15]) : 1'b0;  // BLTZ, BGEZ
 
 // Branch target
 assign pc_nxt_p1 = add_out;
@@ -117,7 +120,7 @@ assign add_out_valid = (uop_cnt_idix_p1[18] & ~opcode_idix_p1[1])  |
 assign shift_rotate_out_valid = uop_cnt_idix_p1[20] | uop_cnt_idix_p1[24]; 
 assign btr_out_valid = uop_cnt_idix_p1[22];
 
-assign alu_output_data =    eq_out_valid            ? eq_out           :        // SEQ, SLT, SLE, BEQZ, BNEZ, BLTZ, BGEZ
+assign alu_output_data =    eq_out_valid            ? {15'b0, eq_out}  :        // SEQ, SLT, SLE, BEQZ, BNEZ, BLTZ, BGEZ
                             logical_out_valid       ? logical_out      :        // Logical ops used
                             add_out_valid           ? add_out          :        // Adder used
                             btr_out_valid           ? {rs_p1[0], rs_p1[1], rs_p1[2], rs_p1[3], rs_p1[4], rs_p1[5], rs_p1[6], rs_p1[7], rs_p1[8], rs_p1[9], rs_p1[10], rs_p1[11], rs_p1[12], rs_p1[13], rs_p1[14], rs_p1[15]} : // BTR

@@ -20,4 +20,4 @@ VLOG_SYNTH:
 
 clean:
 	@echo "Cleaning files..."
-	rm -rf work transcript
+	rm -rf __work work transcript

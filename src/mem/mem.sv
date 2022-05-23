@@ -51,7 +51,7 @@ ldst_mem ldst_mem (
 );
 
 assign dest_reg_index_memwb_p1 = dest_reg_index_ixmem_p1;
-assign dest_reg_value_memwb_p1 = ldst_valid_ixmem_p1 & ~|store_valid_ixmem_p1 ? mem_read_output : dest_reg_index_ixmem_p1;
+assign dest_reg_value_memwb_p1 = ldst_valid_ixmem_p1 & ~|store_valid_ixmem_p1 ? mem_read_output : dest_reg_value_ixmem_p1;
 assign dest_reg_write_valid_memwb_p1 = dest_reg_write_valid_ixmem_p1;
 
 endmodule

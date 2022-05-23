@@ -43,10 +43,10 @@ always_ff @(posedge clk) begin
     // Load memory at reset
     if (rst) begin
         `ifndef SYNTH
-        if (!loaded) begin
+        //if (!loaded) begin
             $readmemh("loadfile_all.img", mem);
-            loaded = 1;
-        end
+            //loaded = 1;
+        //end
         `endif
     end
     // Write memory when enable and write enable set

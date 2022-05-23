@@ -2,6 +2,8 @@ module fetch (
     // Inputs
     input logic         clk,
     input logic         rst,
+    input logic         branch_taken_ixif_p1,
+    input logic [15:0]  branch_target_ixif_p1,
 
     // Outputs
     output logic [15:0] pc_p1,
@@ -19,6 +21,8 @@ always_ff @ (posedge clk) begin
     if (rst)
         pc_p1 <= 'b0;
     // Normal execution, 2 byte instruction - pc , pc + 2 ..
+    else if (branch_taken_ixif_p1)
+        pc_p1 <= branch_target_ixif_p1;
     else 
         pc_p1 <= pc_p1 + 2;
 end

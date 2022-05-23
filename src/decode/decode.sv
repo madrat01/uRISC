@@ -72,6 +72,7 @@ assign uop_cnt_idix_p1[17:2] =  (uop_cnt_idix_p1[19])                       ? {8
 always_comb begin : decode_inst
 
     jmp_displacement_idif_p1 = 1'b0;
+    jmp_displacement_idix_p1 = 1'b0;
     branch_idix_p1 = 1'b0;
     execute_valid_idix_p1 = 1'b0;
     imm5_valid_idix_p1 = 1'b0;
@@ -84,7 +85,6 @@ always_comb begin : decode_inst
     uop_cnt_idix_p1[1] = 1'b0;
     uop_cnt_idix_p1[25:18] = 'b0;
     rotate_shift_right_idix_p1 = 1'b0;
-    dest_reg_idix_p1 = rd_idix_p1;
     reg_write_valid_idix_p1 = 1'b0;
     store_valid_idix_p1 = 2'b0;
     jmp_idix_p1 = 1'b0;
@@ -105,9 +105,9 @@ always_comb begin : decode_inst
         // 00111 sss iiiiiiii   JALR Rs, immediate  R7 <- PC + 2 PC <- Rs + I(sign ext.)
         5'b001xx :  begin 
                         jmp_displacement_idif_p1 = ~opcode_idix_p1[0]; 
+                        jmp_displacement_idix_p1 = ~opcode_idix_p1[0]; 
                         jmp_idix_p1 = |opcode_idix_p1[1:0];
                         uop_cnt_idix_p1[1] = opcode_idix_p1[1];
-                        dest_reg_idix_p1 = 3'b111; // R7 Write
                         reg_write_valid_idix_p1 = uop_cnt_idix_p1[1]; 
                     end
         // Immediate execute
@@ -145,7 +145,6 @@ always_comb begin : decode_inst
                         rd_idix_p1 = inst_ifid_p1[7:5];
                         store_valid_idix_p1[0] = ~|opcode_idix_p1[1:0];
                         store_valid_idix_p1[1] = &opcode_idix_p1[1:0];
-                        dest_reg_idix_p1 = opcode_idix_p1[1:0] == 2'b01 ? rd_idix_p1 : rs_idix_p1;
                         reg_write_valid_idix_p1 = |opcode_idix_p1[1:0];
                     end
         // Rotate execute
@@ -208,5 +207,8 @@ always_comb begin : decode_inst
     endcase
 
 end : decode_inst
+
+assign dest_reg_idix_p1 = uop_cnt_idix_p1[1]                                       ? 3'b111     :
+                          opcode_idix_p1 == 5'b10011 || opcode_idix_p1 == 5'b11000 ? rs_idix_p1 : rd_idix_p1; 
 
 endmodule
