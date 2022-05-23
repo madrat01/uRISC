@@ -1,8 +1,8 @@
 # uRISC
 
---------------------------------------------
-  Authour : Madhav Rathi (mrathi3@wisc.edu
---------------------------------------------
+---------------------------------------------
+  Authour : Madhav Rathi (mrathi3@wisc.edu)
+---------------------------------------------
 
 uRISC - A five stage pipelined microprocessor design. Adapted from ECE 552 Project @ UW Madison.
 
