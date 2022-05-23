@@ -37,7 +37,9 @@ logic           eq_out_valid;
 logic           logical_out_valid;
 logic           add_out_valid;
 logic           shift_rotate_out_valid;
+logic           btr_out_valid;
 
+// PC + 2 for Jump and Branch instructions
 assign pc_plus_2 = pc_p1 + 16'h2;
 
 // Adder input calculation
@@ -113,10 +115,12 @@ assign add_out_valid = (uop_cnt_idix_p1[18] & ~opcode_idix_p1[1])  |
                        (uop_cnt_idix_p1[25])                       |   
                        (opcode_idix_p1[0] & jmp_idix_p1)           ;
 assign shift_rotate_out_valid = uop_cnt_idix_p1[20] | uop_cnt_idix_p1[24]; 
+assign btr_out_valid = uop_cnt_idix_p1[22];
 
 assign alu_output_data =    eq_out_valid            ? eq_out           :        // SEQ, SLT, SLE, BEQZ, BNEZ, BLTZ, BGEZ
                             logical_out_valid       ? logical_out      :        // Logical ops used
-                            add_out_valid           ? add_out          :        // Adder used 
+                            add_out_valid           ? add_out          :        // Adder used
+                            btr_out_valid           ? {rs_p1[0], rs_p1[1], rs_p1[2], rs_p1[3], rs_p1[4], rs_p1[5], rs_p1[6], rs_p1[7], rs_p1[8], rs_p1[9], rs_p1[10], rs_p1[11], rs_p1[12], rs_p1[13], rs_p1[14], rs_p1[15]} : // BTR
                             shift_rotate_out_valid  ? shift_rotate_out : 16'b0; // Shift/Rotate          
                                                                                       
 endmodule

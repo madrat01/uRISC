@@ -6,26 +6,17 @@ logic           err_p1;
 logic [15:0]    inst_count;
 logic           halt_idif_p1;
 
-task automatic reset_task (ref rst);
-    rst = 1;
-    repeat (3) @ (negedge clk);
-    rst = 0;
-endtask //automatic
+// Clk and Reset generation block
+clk_rst clk_rst (.*);
 
+// --- DUT ---
 decode_tb decode_tb (.*);
 execute_tb execute_tb (.*);
 
 top uRISC (.*);
+// -----------
 
 initial begin
-    clk = 0;
-end
-
-always
-    #10 clk = ~clk;
-
-initial begin
-    reset_task(rst);
     fork
         begin : run_test
             repeat (10000) @ (posedge clk);
