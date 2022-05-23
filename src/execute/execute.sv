@@ -40,7 +40,6 @@ logic [2:0]     dest_in;// Write Destination register
 logic           wr;     // Write desitination register?
 logic           en;
 logic [15:0]    data_in;
-logic           excep;
 logic [15:0]    pc;
 
 logic [15:0]    rs_p1;
@@ -48,10 +47,10 @@ logic [15:0]    rt_p1;
 logic [15:0]    rd_p1;
 logic [15:0]    alu_output_data;
 logic           wr_success_p1;
-logic [15:0]    epc_p1;
 
 logic           alu_write_valid;
 logic [15:0]    pc_nxt_p1;
+logic [15:0]    pc_plus_2_p1;
 
 // Rs, Rt and Rd registers
 assign rs_in = rs_idix_p1;
@@ -65,7 +64,7 @@ assign pc = pc_p1;
 
 // WB reg write from execute stage
 assign dest_reg_index_ixmem_p1 = dest_reg_idix_p1;
-assign dest_reg_value_ixmem_p1 = alu_output_data;
+assign dest_reg_value_ixmem_p1 = uop_cnt_idix_p1[1] ? pc_plus_2_p1 : alu_output_data; //JL, JAL or Alu Output
 assign dest_reg_write_valid_ixmem_p1 = reg_write_valid_idix_p1;
 
 // Memory load/store address
@@ -97,15 +96,13 @@ regfile u_regfile(
     .wr                 (wr         ),
     .en                 (en         ),
     .data_in            (data_in    ),
-    .excep              (excep      ),
     .pc                 (pc         ),
 
     // Outputs
     .rs_out             (rs_p1      ),
     .rt_out             (rt_p1      ),
     .rd_out             (rd_p1      ),
-    .wr_success         (wr_success_p1 ),
-    .epc                (epc_p1     )
+    .wr_success         (wr_success_p1 )
 );
 
 alu u_alu(
@@ -129,10 +126,11 @@ alu u_alu(
 
     // Outputs
     .alu_output_data            (alu_output_data            ),
-    .pc_nxt_p1                  (pc_nxt_p1                  )
+    .pc_nxt_p1                  (pc_nxt_p1                  ),
+    .pc_plus_2_p1               (pc_plus_2_p1               )
 );
 
 assign branch_target_ixif_p1 = pc_nxt_p1;
-assign branch_taken_ixif_p1 = branch_idix_p1 & alu_output_data[0];
+assign branch_taken_ixif_p1 = branch_idix_p1 & alu_output_data[0] | jmp_idix_p1 | jmp_displacement_idix_p1;
 
 endmodule

@@ -22,6 +22,7 @@ logic           Halt;         /* Halt executed and in Memory or writeback stage 
 int             inst_count;
 int             trace_file;
 int             sim_log_file;
+int             dump_file;
 
 logic           Error;
 
@@ -38,14 +39,15 @@ top uRISC (.*);
 initial begin
     trace_file = $fopen("verilogsim.trace");
     sim_log_file = $fopen("verilogsim.log");
+    $dumpfile("dump.wlf");
 end
 
 initial begin
     fork
         begin : run_test
-            repeat (10000) @ (posedge clk);
+            repeat (10002) @ (posedge clk);
             $display ("10k Instructions Run: Stop!");
-            $stop;
+            $finish;
         end
         begin
             if (Error) begin
@@ -59,7 +61,7 @@ end
 
 always_ff @(posedge clk) begin
     if (rst)
-        inst_count <= 'b0;
+        inst_count <= 'b1;
     else begin
         if (Halt || RegWrite || MemWrite)
             inst_count <= inst_count + 1;
@@ -135,25 +137,25 @@ assign PC = uRISC.pc_p1;
 
 assign Inst = uRISC.inst_ifid_p1;
 
-assign RegWrite = uRISC.reg_write_valid_idix_p1;
+assign RegWrite = uRISC.dest_reg_write_valid_memwb_p1;
 // Is register being written, one bit signal (1 means yes, 0 means no)
 
-assign WriteRegister = uRISC.dest_reg_idix_p1;
+assign WriteRegister = uRISC.dest_reg_index_memwb_p1;
 // The name of the register being written to. (3 bit signal)
 
-assign WriteData = uRISC.dest_reg_value_ixmem_p1;
+assign WriteData = uRISC.dest_reg_value_memwb_p1;
 // Data being written to the register. (16 bits)
 
-assign MemRead =  uRISC.ldst_valid_ixmem_p1 & ~uRISC.store_valid_ixmem_p1;
+assign MemRead =  uRISC.ldst_valid_ixmem_p1 & ~|uRISC.store_valid_ixmem_p1;
 // Is memory being read, one bit signal (1 means yes, 0 means no)
 
-assign MemWrite = uRISC.ldst_valid_ixmem_p1 & uRISC.store_valid_ixmem_p1;
+assign MemWrite = uRISC.ldst_valid_ixmem_p1 & |uRISC.store_valid_ixmem_p1;
 // Is memory being written to (1 bit signal)
 
 assign MemAddress = uRISC.mem_addr_ixmem_p1;
 // Address to access memory with (for both reads and writes to memory, 16 bits)
 
-assign MemData = uRISC.dest_reg_value_ixmem_p1;
+assign MemData = uRISC.mem_data_in_ixmem_p1;
 // Data to be written to memory for memory writes (16 bits)
 
 assign Halt = uRISC.halt_idif_p1;

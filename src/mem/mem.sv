@@ -33,7 +33,7 @@ assign enable = ldst_valid_ixmem_p1;
 assign data_in = mem_data_in_ixmem_p1;
 
 // wr enable when store instruction valid
-assign wr = store_valid_ixmem_p1;
+assign wr = |store_valid_ixmem_p1;
 
 ldst_mem ldst_mem (
     // Inputs

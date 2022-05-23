@@ -1,4 +1,6 @@
-module top (
+module top 
+    import defines_pkg::*;
+(
     // Inputs
     input logic             clk,
     input logic             rst,
@@ -35,6 +37,7 @@ logic           rotate_shift_right_idix_p1;
 logic [2:0]     dest_reg_idix_p1;
 logic           reg_write_valid_idix_p1;
 logic [1:0]     store_valid_idix_p1;
+inst_t          curr_inst_idix_p1;
 
 // Execute output signals
 logic [15:0]    dest_reg_value_ixmem_p1;
@@ -59,9 +62,12 @@ fetch u_fetch
     .rst                        (rst),
     .branch_taken_ixif_p1       (branch_taken_ixif_p1),
     .branch_target_ixif_p1      (branch_target_ixif_p1),
+    .illegal_op_idif_p1         (illegal_op_idif_p1),
+    .return_execution_idif_p1   (return_execution_idif_p1),
 
     // Outputs
     .pc_p1                      (pc_p1),
+    .epc_p1                     (epc_p1),
     .inst_ifid_p1               (inst_ifid_p1),
     .err_p1                     (err_p1)
 );
@@ -95,7 +101,8 @@ decode u_decode(
     .rotate_shift_right_idix_p1     (rotate_shift_right_idix_p1     ),
     .dest_reg_idix_p1               (dest_reg_idix_p1               ),
     .reg_write_valid_idix_p1        (reg_write_valid_idix_p1        ),
-    .store_valid_idix_p1            (store_valid_idix_p1            )
+    .store_valid_idix_p1            (store_valid_idix_p1            ),
+    .curr_inst_idix_p1              (curr_inst_idix_p1              )
 );
 
 execute u_execute(

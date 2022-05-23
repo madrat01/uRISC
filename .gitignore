@@ -6,3 +6,10 @@ reports
 *.img
 *.lst
 *.trace
+*.dgb
+*.wlf
+*.do
+*.outputs*.ptrace
+*.dmem
+*.reg
+run

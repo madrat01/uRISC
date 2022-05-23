@@ -9,15 +9,13 @@ module regfile (
     input logic         wr,     // Write desitination register?
     input logic         en,
     input logic [15:0]  data_in,
-    input logic         excep,
     input logic [15:0]  pc,
 
     // Outputs
     output logic [15:0] rs_out,
     output logic [15:0] rt_out,
     output logic [15:0] rd_out,
-    output logic        wr_success,
-    output logic [15:0] epc
+    output logic        wr_success
 );
 
 // 8 16-bit GPRs
@@ -54,17 +52,6 @@ always_ff @ (posedge clk) begin
     // Default write success to 0
     end else
         wr_success <= 1'b0;
-end
-
-// ----
-// Write EPC Register
-// ----
-always_ff @ (posedge clk) begin
-    // Reset all registers to 0
-    if (rst)
-        epc <= 16'b0;
-    else if (excep)
-        epc <= pc;
 end
 
 endmodule

@@ -7,7 +7,7 @@ int cycle_count;
 
 task automatic reset_task (ref rst, ref clk);
     rst = 1;
-    repeat (3) @ (negedge clk);
+    repeat (2) @ (negedge clk);
     rst = 0;
 endtask //automatic
 

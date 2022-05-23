@@ -1,4 +1,6 @@
-module decode (
+module decode 
+    import defines_pkg::*;    
+(
     // Inputs
     input logic             clk,
     input logic             rst,
@@ -27,7 +29,8 @@ module decode (
     output logic            rotate_shift_right_idix_p1,
     output logic [2:0]      dest_reg_idix_p1,
     output logic            reg_write_valid_idix_p1,
-    output logic [1:0]      store_valid_idix_p1 // 0-Store, 1-Store with update
+    output logic [1:0]      store_valid_idix_p1, // 0-Store, 1-Store with update
+    output inst_t           curr_inst_idix_p1
 );
 
 logic imm5_valid_idix_p1;
@@ -88,6 +91,7 @@ always_comb begin : decode_inst
     reg_write_valid_idix_p1 = 1'b0;
     store_valid_idix_p1 = 2'b0;
     jmp_idix_p1 = 1'b0;
+    curr_inst_idix_p1 = inst_t'({opcode_idix_p1, 2'b00});
 
     case (opcode_idix_p1) inside
         // Halt execution
@@ -191,6 +195,7 @@ always_comb begin : decode_inst
                         uop_cnt_idix_p1[24] = ~opcode_idix_p1[0];
                         rotate_shift_right_idix_p1 = uop_cnt_idix_p1[24] & inst_ifid_p1[1];
                         reg_write_valid_idix_p1 = 1'b1;
+                        curr_inst_idix_p1 = inst_t'({opcode_idix_p1, inst_idix_p1[1:0]});
                     end
         // Equalence checks
         // 11100 sss ttt ddd xx SEQ Rd, Rs, Rt if (Rs == Rt) then Rd <- 1 else Rd <- 0
@@ -208,7 +213,7 @@ always_comb begin : decode_inst
 
 end : decode_inst
 
-assign dest_reg_idix_p1 = uop_cnt_idix_p1[1]                                       ? 3'b111     :
-                          opcode_idix_p1 == 5'b10011 || opcode_idix_p1 == 5'b11000 ? rs_idix_p1 : rd_idix_p1; 
+assign dest_reg_idix_p1 = uop_cnt_idix_p1[1]                                       ? 3'b111     : //JL, JAL
+                          opcode_idix_p1 == 5'b10011 || opcode_idix_p1 == 5'b11000 || opcode_idix_p1 == 5'b10010 ? rs_idix_p1 : rd_idix_p1; // STU LBI SLBI
 
 endmodule

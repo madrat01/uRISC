@@ -19,7 +19,8 @@ module alu (
 
     // Outputs
     output logic [15:0] alu_output_data,
-    output logic [15:0] pc_nxt_p1
+    output logic [15:0] pc_nxt_p1,
+    output logic [15:0] pc_plus_2_p1
 );
 
 logic [15:0]        SExt15;
@@ -30,9 +31,8 @@ logic               adder_in_use;
 logic [3:0]         shift_rotate_val;
 logic [15:0]        shift_rotate_out;
 logic [15:0]        logical_out;
-logic [15:0] eq1, eq2;
+logic signed [15:0] eq1, eq2;
 logic               eq_out;
-logic [15:0]        pc_plus_2;
 logic               rotate;
 logic               eq_out_valid;
 logic               logical_out_valid;
@@ -43,12 +43,12 @@ logic               btr_out_valid;
 assign SExt15 = uop_cnt_idix_p1[17:2]; 
 
 // PC + 2 for Jump and Branch instructions
-assign pc_plus_2 = pc_p1 + 16'h2;
+assign pc_plus_2_p1 = pc_p1 + 16'h2;
 
 // Adder input calculation
 assign add1 =   (opcode_idix_p1[1:0] == 2'b00 & uop_cnt_idix_p1[18])      ? rs_p1                   :   // ADDI
                 (opcode_idix_p1[1:0] == 2'b01 & uop_cnt_idix_p1[18])      ? uop_cnt_idix_p1[17:2]   :   // SUBI
-                (branch_idix_p1 | jmp_displacement_idix_p1)               ? pc_plus_2               :   // BEQZ, BNEZ, BLTZ, BGEZ, J, JAL
+                (branch_idix_p1 | jmp_displacement_idix_p1)               ? pc_plus_2_p1            :   // BEQZ, BNEZ, BLTZ, BGEZ, J, JAL
                 (ldst_valid_idix_p1)                                      ? rs_p1                   :   // LD ST
                 (inst_idix_p1[1:0] == 2'b00 & uop_cnt_idix_p1[23])        ? rs_p1                   :   // ADD
                 (inst_idix_p1[1:0] == 2'b01 & uop_cnt_idix_p1[23])        ? rt_p1                   :   // SUB
@@ -85,7 +85,6 @@ always_comb begin : logical_ops
                       uop_cnt_idix_p1[23] & inst_idix_p1[1] & ~inst_idix_p1[0]     ? rs_p1 ^ rt_p1                  :   // XOR
                       uop_cnt_idix_p1[23] & inst_idix_p1[1] &  inst_idix_p1[0]     ? rs_p1 & ~rt_p1                 :   // ANDN
                       uop_cnt_idix_p1[21]                                          ? uop_cnt_idix_p1[17:2]          :   // LBI
-                      uop_cnt_idix_p1[1]                                           ? pc_plus_2                      :   //JAL, JALR
                       uop_cnt_idix_p1[19]                                          ? (rs_p1 << 8) | uop_cnt_idix_p1[17:2] :  16'b0; // SLBI
     end else
         logical_out = 16'b0;
@@ -93,8 +92,8 @@ end
 
 // Compare checks
 // SEQ, SLT, SLE, BEQZ, BNEZ, BLTZ, BGEZ
-assign eq1 = rs_p1;
-assign eq2 = rt_p1;
+assign eq1 = $signed(rs_p1);
+assign eq2 = $signed(rt_p1);
 
 assign eq_out = uop_cnt_idix_p1[25] ? (opcode_idix_p1[1:0] == 2'b00 ? eq1 == eq2 :              // SEQ
                                        opcode_idix_p1[1:0] == 2'b01 ? eq1 < eq2  :              // SLT
@@ -103,19 +102,19 @@ assign eq_out = uop_cnt_idix_p1[25] ? (opcode_idix_p1[1:0] == 2'b00 ? eq1 == eq2
                                        opcode_idix_p1[1:0] == 2'b01 ? |eq1       :              // BNEZ
                                        opcode_idix_p1[1:0] == 2'b10 ? eq1[15]    : ~eq1[15]) : 1'b0;  // BLTZ, BGEZ
 
-// Branch target
+// Branch and jump target
 assign pc_nxt_p1 = add_out;
 
 assign eq_out_valid = uop_cnt_idix_p1[25] | branch_idix_p1;
 assign logical_out_valid = (uop_cnt_idix_p1[18] & opcode_idix_p1[1])   |   
                            (uop_cnt_idix_p1[23] & inst_idix_p1[1])     |   
                            uop_cnt_idix_p1[21]                         |    
-                           uop_cnt_idix_p1[1]                          |    
                            uop_cnt_idix_p1[19]                         ;
 assign add_out_valid = (uop_cnt_idix_p1[18] & ~opcode_idix_p1[1])  |   
                        (branch_idix_p1 | jmp_displacement_idix_p1) |   
                        (uop_cnt_idix_p1[23] & ~inst_idix_p1[1])    | 
-                       (uop_cnt_idix_p1[25])                       |   
+                       (uop_cnt_idix_p1[25])                       |
+                       (ldst_valid_idix_p1)                        |   
                        (opcode_idix_p1[0] & jmp_idix_p1)           ;
 assign shift_rotate_out_valid = uop_cnt_idix_p1[20] | uop_cnt_idix_p1[24]; 
 assign btr_out_valid = uop_cnt_idix_p1[22];
