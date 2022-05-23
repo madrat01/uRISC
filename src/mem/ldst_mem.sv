@@ -21,7 +21,6 @@ logic [7:0]     mem[0:63];
 logic           loaded;
 logic           wr_en;
 
-/* Gives multiple drivers eror
 `ifndef SYNTH
 initial begin
     loaded = 0;
@@ -29,7 +28,6 @@ initial begin
         mem[i] = 'b0;
 end
 `endif
-*/
 
 // Read data if enable set and not writing
 assign data_out = enable & ~wr ? {mem[addr], mem[addr+1]} : 16'h0;
@@ -40,7 +38,7 @@ assign err = enable & addr[0];
 assign wr_en = wr & enable;
 
 // Big-endian memory
-always_ff @(posedge clk) begin
+always @(posedge clk) begin
     // Load memory at reset
     if (rst) begin
         `ifndef SYNTH
