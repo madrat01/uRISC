@@ -1,30 +1,30 @@
 module decode_tb(input logic clk, input logic rst);
 
 logic [15:0]    pc_p1;
-logic [15:0]    inst_ifid_p1;
+logic [15:0]    inst_ifid_p2;
 logic [15:0]    epc_p1;
 
-logic [2:0]     rd_idix_p1;
-logic [2:0]     rs_idix_p1;
-logic [2:0]     rt_idix_p1;
-logic           ldst_valid_idix_p1;
-logic           halt_idif_p1;
-logic           nop_idif_p1;
-logic           illegal_op_idif_p1;
-logic           return_execution_idif_p1;
-logic           jmp_idix_p1;
-logic           branch_idix_p1;
-logic           jmp_displacement_idif_p1;
-logic           jmp_displacement_idix_p1;
-logic [15:0]    jmp_displacement_value_idif_p1;
-logic [4:0]     opcode_idix_p1;
-logic           execute_valid_idix_p1;
-logic [25:0]    uop_cnt_idix_p1;
-logic           rotate_shift_right_idix_p1;
-logic [15:0]    inst_idix_p1;
-logic [2:0]     dest_reg_idix_p1;
-logic           reg_write_valid_idix_p1;
-logic [1:0]     store_valid_idix_p1;
+logic [2:0]     rd_idix_p3;
+logic [2:0]     rs_idix_p3;
+logic [2:0]     rt_idix_p3;
+logic           ldst_valid_idix_p3;
+logic           halt_idif_p3;
+logic           nop_idif_p3;
+logic           illegal_op_idif_p3;
+logic           return_execution_idif_p3;
+logic           jmp_idix_p3;
+logic           branch_idix_p3;
+logic           jmp_displacement_idif_p3;
+logic           jmp_displacement_idix_p3;
+logic [15:0]    jmp_displacement_value_idif_p3;
+logic [4:0]     opcode_idix_p3;
+logic           execute_valid_idix_p3;
+logic [25:0]    uop_cnt_idix_p3;
+logic           rotate_shift_right_idix_p3;
+logic [15:0]    inst_idix_p3;
+logic [2:0]     dest_reg_idix_p3;
+logic           reg_write_valid_idix_p3;
+logic [1:0]     store_valid_idix_p3;
 
 task automatic force_inst (input logic [15:0] inst, output logic [15:0] inst_f);
     inst_f = inst;
@@ -116,7 +116,7 @@ endtask //automatic
 decode u_decode (.*);
 
 initial begin
-    decode_check(inst_ifid_p1, uop_cnt_idix_p1);
+    decode_check(inst_ifid_p2, uop_cnt_idix_p3);
     repeat (5) @ (posedge clk);
 end
 

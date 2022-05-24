@@ -25,9 +25,11 @@ logic [15:0]    gpr[0:7];
 // ----
 // Read Register
 // ----
-assign rs_out = en ? gpr[rs_in] : 'bx;
-assign rt_out = en ? gpr[rt_in] : 'bx;
-assign rd_out = en ? gpr[rd_in] : 'bx;
+always_ff @ (posedge clk) begin
+    rs_out <= en ? gpr[rs_in] : 'bx;
+    rt_out <= en ? gpr[rt_in] : 'bx;
+    rd_out <= en ? gpr[rd_in] : 'bx;
+end
 
 // ----
 // Write Register

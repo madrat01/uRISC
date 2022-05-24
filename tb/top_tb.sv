@@ -2,8 +2,8 @@ module top_tb();
 
 logic           clk;
 logic           rst;
-logic           err_p1;
-logic           halt_idif_p1;
+logic           err;
+logic           halt_idif_p3;
 
 logic [15:0]    PC;
 logic [15:0]    Inst;           /* This should be the 15 bits of the FF that
@@ -135,31 +135,31 @@ end
 
 assign PC = uRISC.pc_p1;
 
-assign Inst = uRISC.inst_ifid_p1;
+assign Inst = uRISC.inst_ifid_p2;
 
-assign RegWrite = uRISC.dest_reg_write_valid_memwb_p1;
+assign RegWrite = uRISC.dest_reg_write_valid_memwb_p5;
 // Is register being written, one bit signal (1 means yes, 0 means no)
 
-assign WriteRegister = uRISC.dest_reg_index_memwb_p1;
+assign WriteRegister = uRISC.dest_reg_index_memwb_p5;
 // The name of the register being written to. (3 bit signal)
 
-assign WriteData = uRISC.dest_reg_value_memwb_p1;
+assign WriteData = uRISC.dest_reg_value_memwb_p5;
 // Data being written to the register. (16 bits)
 
-assign MemRead =  uRISC.ldst_valid_ixmem_p1 & ~|uRISC.store_valid_ixmem_p1;
+assign MemRead =  uRISC.ldst_valid_ixmem_p4 & ~|uRISC.store_valid_ixmem_p4;
 // Is memory being read, one bit signal (1 means yes, 0 means no)
 
-assign MemWrite = uRISC.ldst_valid_ixmem_p1 & |uRISC.store_valid_ixmem_p1;
+assign MemWrite = uRISC.ldst_valid_ixmem_p4 & |uRISC.store_valid_ixmem_p4;
 // Is memory being written to (1 bit signal)
 
-assign MemAddress = uRISC.mem_addr_ixmem_p1;
+assign MemAddress = uRISC.mem_addr_ixmem_p4;
 // Address to access memory with (for both reads and writes to memory, 16 bits)
 
-assign MemData = uRISC.mem_data_in_ixmem_p1;
+assign MemData = uRISC.mem_data_in_ixmem_p4;
 // Data to be written to memory for memory writes (16 bits)
 
-assign Halt = uRISC.halt_idif_p1;
+assign Halt = uRISC.halt_idif_p3;
 
-assign Error = err_p1;
+assign Error = err;
 
 endmodule
