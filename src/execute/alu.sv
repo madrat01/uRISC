@@ -16,11 +16,11 @@ module alu (
     input logic [2:0]   dest_reg_idix_p1,
     input logic         reg_write_valid_idix_p1,
     input logic         jmp_displacement_idix_p1,
+    input logic [15:0]  nxt_pc_p1,
 
     // Outputs
     output logic [15:0] alu_output_data,
-    output logic [15:0] pc_nxt_p1,
-    output logic [15:0] pc_plus_2_p1
+    output logic [15:0] pc_nxt_p1
 );
 
 logic [15:0]        SExt15;
@@ -42,13 +42,10 @@ logic               btr_out_valid;
 
 assign SExt15 = uop_cnt_idix_p1[17:2]; 
 
-// PC + 2 for Jump and Branch instructions
-assign pc_plus_2_p1 = pc_p1 + 16'h2;
-
 // Adder input calculation
 assign add1 =   (opcode_idix_p1[1:0] == 2'b00 & uop_cnt_idix_p1[18])      ? rs_p1                   :   // ADDI
                 (opcode_idix_p1[1:0] == 2'b01 & uop_cnt_idix_p1[18])      ? uop_cnt_idix_p1[17:2]   :   // SUBI
-                (branch_idix_p1 | jmp_displacement_idix_p1)               ? pc_plus_2_p1            :   // BEQZ, BNEZ, BLTZ, BGEZ, J, JAL
+                (branch_idix_p1 | jmp_displacement_idix_p1)               ? nxt_pc_p1               :   // BEQZ, BNEZ, BLTZ, BGEZ, J, JAL
                 (ldst_valid_idix_p1)                                      ? rs_p1                   :   // LD ST
                 (inst_idix_p1[1:0] == 2'b00 & uop_cnt_idix_p1[23])        ? rs_p1                   :   // ADD
                 (inst_idix_p1[1:0] == 2'b01 & uop_cnt_idix_p1[23])        ? rt_p1                   :   // SUB

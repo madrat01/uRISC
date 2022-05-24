@@ -1,4 +1,4 @@
-module ldst_mem (
+module memory_ram (
     // Inputs
     input logic         clk,
     input logic         rst,

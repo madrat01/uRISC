@@ -12,14 +12,15 @@ module top
 
 // Fetch output signals
 logic [15:0]    pc_p1;
+logic [15:0]    nxt_pc_p1;
 logic [15:0]    epc_p1;
 logic [15:0]    inst_ifid_p1;
 
 // Decode output signals
 logic [15:0]    inst_idix_p1;
-logic [2:0]     rd_idix_p1;
-logic [2:0]     rs_idix_p1;
-logic [2:0]     rt_idix_p1;
+logic [15:0]    rd_idix_p1;
+logic [15:0]    rs_idix_p1;
+logic [15:0]    rt_idix_p1;
 logic           ldst_valid_idix_p1;
 logic           nop_idif_p1;
 logic           illegal_op_idif_p1;
@@ -67,6 +68,7 @@ fetch u_fetch
 
     // Outputs
     .pc_p1                      (pc_p1),
+    .nxt_pc_p1                  (nxt_pc_p1),
     .epc_p1                     (epc_p1),
     .inst_ifid_p1               (inst_ifid_p1),
     .err_p1                     (err_p1)
@@ -79,6 +81,10 @@ decode u_decode(
     .pc_p1                          (pc_p1                          ),
     .inst_ifid_p1                   (inst_ifid_p1                   ),
     .epc_p1                         (epc_p1                         ),
+    .nxt_pc_p1                      (nxt_pc_p1                      ),
+    .dest_reg_value_memwb_p1        (dest_reg_value_memwb_p1        ),
+    .dest_reg_index_memwb_p1        (dest_reg_index_memwb_p1        ),
+    .dest_reg_write_valid_memwb_p1  (dest_reg_write_valid_memwb_p1  ), 
 
     // Outputs
     .inst_idix_p1                   (inst_idix_p1                   ),
@@ -125,9 +131,7 @@ execute u_execute(
     .dest_reg_idix_p1               (dest_reg_idix_p1               ),
     .reg_write_valid_idix_p1        (reg_write_valid_idix_p1        ),
     .jmp_displacement_idix_p1       (jmp_displacement_idix_p1       ),
-    .dest_reg_value_memwb_p1        (dest_reg_value_memwb_p1),
-    .dest_reg_index_memwb_p1        (dest_reg_index_memwb_p1),
-    .dest_reg_write_valid_memwb_p1  (dest_reg_write_valid_memwb_p1), 
+    .nxt_pc_p1                      (nxt_pc_p1             ),
 
     // Outputs
     .dest_reg_value_ixmem_p1        (dest_reg_value_ixmem_p1       ),            

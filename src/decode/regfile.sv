@@ -9,7 +9,6 @@ module regfile (
     input logic         wr,     // Write desitination register?
     input logic         en,
     input logic [15:0]  data_in,
-    input logic [15:0]  pc,
 
     // Outputs
     output logic [15:0] rs_out,

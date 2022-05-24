@@ -1,6 +1,6 @@
 SRC = ./src
 TB = ./tb
-INCLUDE_FILES = ${SRC}/defines_pkg.sv ${TB}/*.sv ${SRC}/top.sv ${SRC}/fetch/*.sv ${SRC}/decode/*.sv ${SRC}/execute/*.sv ${SRC}/mem/*.sv
+INCLUDE_FILES = ${TB}/*.sv ${SRC}/*.sv ${SRC}/fetch/*.sv ${SRC}/decode/*.sv ${SRC}/execute/*.sv ${SRC}/mem/*.sv
 
 IVERILOG:
 	@echo "Compiling source files..."

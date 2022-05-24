@@ -22,6 +22,7 @@ logic [15:0]    data_in;
 logic           wr;
 logic           err;
 logic [15:0]    mem_read_output;
+logic           wr_success_mem_p1;
 
 // Address to read/write
 assign addr = mem_addr_ixmem_p1;
@@ -35,7 +36,7 @@ assign data_in = mem_data_in_ixmem_p1;
 // wr enable when store instruction valid
 assign wr = |store_valid_ixmem_p1;
 
-ldst_mem ldst_mem (
+memory_ram ldst_mem (
     // Inputs
     .clk            (clk),
     .rst            (rst),
@@ -47,7 +48,7 @@ ldst_mem ldst_mem (
     // Outputs
     .data_out       (mem_read_output),
     .err            (err),
-    .wr_success     (wr_success)
+    .wr_success     (wr_success_mem_p1)
 );
 
 assign dest_reg_index_memwb_p1 = dest_reg_index_ixmem_p1;
